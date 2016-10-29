@@ -163,14 +163,13 @@ class a_notepad:
     def popupmsg(self, comm):
         self.popup_window = tkinter.Toplevel()
         self.popup_window.title("Andrea's Notepad")
-        self.msg = tkinter.Label(self.popup_window, text="Do you wish to save changes to " + self.filename + "?")
-        self.msg.pack()
+        self.msg = tkinter.Label(self.popup_window, text="Do you wish to save changes to " + self.filename + "?").grid(row=0)
         self.save_button = tkinter.Button(self.popup_window, text="Save", command=lambda: mult_func(self.popup_window.destroy(), self.save(), comm()))
-        self.save_button.pack()
+        self.save_button.grid(row=1, column=0)
         self.nosave_button = tkinter.Button(self.popup_window, text="Don't Save", command=lambda: mult_func(self.popup_window.destroy(), comm()))
-        self.nosave_button.pack()
+        self.nosave_button.grid(row=1, column=1)
         self.cancel_button = tkinter.Button(self.popup_window, text="Cancel", command=lambda: self.popup_window.destroy())
-        self.cancel_button.pack()
+        self.cancel_button.grid(row=1, column=2)
     
     # clear all text from the text editor and start with blank document
     def new(self):
