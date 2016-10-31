@@ -14,7 +14,7 @@ class a_notepad:
         self.original = ''
         self.window.title(self.filename + " - Andrea's Notepad")  
         self.text = tkinter.Text(self.window)
-        self.text.pack()
+        self.text.pack(expand = 1, fill = tkinter.BOTH)
         
         # add keyboard commands
         self.window.bind('<Control-n>', lambda e: self.new_save_check())
@@ -161,21 +161,25 @@ class a_notepad:
     
     # custom save pop-up message box
     def popupmsg(self, comm):
-        self.popup_window = tkinter.Toplevel()
+        self.popup_window = tkinter.Toplevel(self.window)
         self.popup_window.title("Andrea's Notepad")
-        self.msg = tkinter.Label(self.popup_window, text="Do you wish to save changes to " + self.filename + "?").grid(row=0)
-        self.save_button = tkinter.Button(self.popup_window, text="Save", command=lambda: mult_func(self.popup_window.destroy(), self.save(), comm()))
-        self.save_button.grid(row=1, column=0)
-        self.nosave_button = tkinter.Button(self.popup_window, text="Don't Save", command=lambda: mult_func(self.popup_window.destroy(), comm()))
-        self.nosave_button.grid(row=1, column=1)
+        self.popup_window.geometry('400x100')
+        self.msg = tkinter.Label(self.popup_window, text="Do you wish to save changes to " + self.filename + "?")
+        self.msg.pack(side = 'top', fill = 'both', expand = True)
         self.cancel_button = tkinter.Button(self.popup_window, text="Cancel", command=lambda: self.popup_window.destroy())
-        self.cancel_button.grid(row=1, column=2)
+        self.cancel_button.pack(side='right', padx = 5, pady = 10)
+        self.nosave_button = tkinter.Button(self.popup_window, text="Don't Save", command=lambda: mult_func(self.popup_window.destroy(), comm()))
+        self.nosave_button.pack(side='right', padx = 5, pady = 10)
+        self.save_button = tkinter.Button(self.popup_window, text="Save", command=lambda: mult_func(self.popup_window.destroy(), self.save(), comm()))
+        self.save_button.pack(side = 'right', padx = 5, pady = 10)
+        self.popup_window.grab_set()
     
     # clear all text from the text editor and start with blank document
     def new(self):
         self.text.delete(1.0, 'end-1c')
         self.filename = 'Untitled'
         self.window.title(self.filename + " - Andrea's Notepad")
+    
     
     # detect that the text has been edited
     def text_change(self):
@@ -189,7 +193,8 @@ class a_notepad:
             if self.original == data:
                 return False
             else:
-                return True      
+                return True
+    
     
 # multiple function handler
 def mult_func(*args):
