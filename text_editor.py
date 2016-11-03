@@ -52,10 +52,10 @@ class a_notepad:
         # create Edit pulldown menu
         self.editmenu = tkinter.Menu(self.menubar, tearoff=0)
         self.editmenu.add_command(label="Undo", command=lambda: self.hello(), accelerator="Ctrl+Z")
-        self.editmenu.add_command(label="Cut", command=lambda: self.hello(), accelerator="Ctrl+X")
-        self.editmenu.add_command(label="Copy", command=lambda: self.hello(), accelerator="Ctrl+C")
-        self.editmenu.add_command(label="Paste", command=lambda: self.hello(), accelerator="Ctrl+V")
-        self.editmenu.add_command(label="Delete", command=lambda: self.hello(), accelerator="Del")
+        self.editmenu.add_command(label="Cut", command=lambda: self.cut(), accelerator="Ctrl+X")
+        self.editmenu.add_command(label="Copy", command=lambda: self.copy(), accelerator="Ctrl+C")
+        self.editmenu.add_command(label="Paste", command=lambda: self.paste(), accelerator="Ctrl+V")
+        self.editmenu.add_command(label="Delete", command=lambda: self.delete(), accelerator="Del")
         self.editmenu.add_command(label="Find...", command=lambda: self.hello(), accelerator="Ctrl+F")
         self.editmenu.add_command(label="Find Next", command=lambda: self.hello(), accelerator="F3")
         self.editmenu.add_command(label="Replace...", command=lambda: self.hello(), accelerator="Ctrl+H")
@@ -89,7 +89,23 @@ class a_notepad:
     # hold for future functionality
     def hello(self):
         print ("hello!")
+    
+    # copy selected text
+    def copy(self):
+        print ('hey there')
+    
+    # cut selected text
+    def cut(self):
+        print ('bugger')
+    
+    # paste selected text
+    def paste(self):
+        print ('howdy')
         
+    # delete selected text
+    def delete(self):
+        print('delete me')
+          
     # close text editor
     def quit(self):
         if self.text_change():
