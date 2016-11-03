@@ -1,20 +1,26 @@
-import tkinter
-import tkinter.filedialog as dialog
-import tkinter.messagebox as message
 import os
 from os.path import basename
+# python2 and python3 compatibility
+try:
+    import Tkinter as tk
+    import Tkinter.filedialog as dialog
+    import Tkinter.messagebox as message
+except ImportError:
+    import tkinter as tk
+    import tkinter.filedialog as dialog
+    import tkinter.messagebox as message
 
 class a_notepad:
             
     def __init__(self):
         
         # create base GUI
-        self.window = tkinter.Tk()
+        self.window = tk.Tk()
         self.filename = 'Untitled'
         self.original = ''
         self.window.title(self.filename + " - Andrea's Notepad")  
-        self.text = tkinter.Text(self.window)
-        self.text.pack(expand = 1, fill = tkinter.BOTH)
+        self.text = tk.Text(self.window)
+        self.text.pack(expand = 1, fill = tk.BOTH)
         
         # add keyboard commands
         self.window.bind('<Control-n>', lambda e: self.new_save_check())
@@ -22,9 +28,10 @@ class a_notepad:
         self.window.bind('<Control-s>', lambda e: self.save())
         self.window.bind('<Control-p>', lambda e: self.hello())
         self.window.bind('<Control-z>', lambda e: self.hello())
-        self.window.bind('<Control-x>', lambda e: self.hello())
-        self.window.bind('<Control-v>', lambda e: self.hello())
-        self.window.bind('<Delete>', lambda e: self.hello())
+        self.window.bind('<Control-x>', lambda e: self.cut())
+        self.window.bind('<Control-v>', lambda e: self.paste())
+        self.window.bind('<Control-c>', lambda e: self.copy())
+        self.window.bind('<Delete>', lambda e: self.delete())
         self.window.bind('<Control-f>', lambda e: self.hello())
         self.window.bind('<F3>', lambda e: self.hello())
         self.window.bind('<Control-h>', lambda e: self.hello())
@@ -36,10 +43,10 @@ class a_notepad:
         self.window.protocol("WM_DELETE_WINDOW", lambda: self.quit())
         
         # create menus 
-        self.menubar = tkinter.Menu(self.window)
+        self.menubar = tk.Menu(self.window)
         
         # create File pulldown menu
-        self.filemenu = tkinter.Menu(self.menubar, tearoff=0)
+        self.filemenu = tk.Menu(self.menubar, tearoff=0)
         self.filemenu.add_command(label="New", command= lambda: self.new_save_check(), accelerator="Ctrl+N")
         self.filemenu.add_command(label="Open...", command= lambda: self.open_save_check(), accelerator="Ctrl+O")
         self.filemenu.add_command(label="Save", command = lambda : self.save(), accelerator="Ctrl+S")
@@ -50,7 +57,7 @@ class a_notepad:
         self.menubar.add_cascade(label="File", menu=self.filemenu)
         
         # create Edit pulldown menu
-        self.editmenu = tkinter.Menu(self.menubar, tearoff=0)
+        self.editmenu = tk.Menu(self.menubar, tearoff=0)
         self.editmenu.add_command(label="Undo", command=lambda: self.hello(), accelerator="Ctrl+Z")
         self.editmenu.add_command(label="Cut", command=lambda: self.cut(), accelerator="Ctrl+X")
         self.editmenu.add_command(label="Copy", command=lambda: self.copy(), accelerator="Ctrl+C")
@@ -65,18 +72,18 @@ class a_notepad:
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
         
         # create Format pulldown menu
-        self.formatmenu = tkinter.Menu(self.menubar, tearoff=0)
+        self.formatmenu = tk.Menu(self.menubar, tearoff=0)
         self.formatmenu.add_command(label="Word Wrap", command=lambda: self.hello())
         self.formatmenu.add_command(label="Font...", command=lambda: self.hello())
         self.menubar.add_cascade(label="Format", menu=self.formatmenu)
         
         # create View pulldown menu
-        self.viewmenu = tkinter.Menu(self.menubar, tearoff=0)
+        self.viewmenu = tk.Menu(self.menubar, tearoff=0)
         self.viewmenu.add_command(label="Status Bar", command=lambda: self.hello())
         self.menubar.add_cascade(label="View", menu=self.viewmenu)
         
         # create Help pulldown menu
-        self.helpmenu = tkinter.Menu(self.menubar, tearoff=0)
+        self.helpmenu = tk.Menu(self.menubar, tearoff=0)
         self.helpmenu.add_command(label="About", command=lambda: self.hello())
         self.menubar.add_cascade(label="Help", menu=self.helpmenu)
     
@@ -92,20 +99,24 @@ class a_notepad:
     
     # copy selected text
     def copy(self):
-        print ('hey there')
+        self.window.clipboard_clear()
+        text = self.text.get('sel.first', 'sel.last')
+        self.window.clipboard_append(text)
     
     # cut selected text
     def cut(self):
-        print ('bugger')
+        self.copy()
+        self.delete()
     
     # paste selected text
     def paste(self):
-        print ('howdy')
+        text = self.window.clipboard_get()
+        self.text.insert('insert', text)
         
     # delete selected text
-    def delete(self):
-        print('delete me')
-          
+    def delete(self): 
+        self.text.delete('sel.first', 'sel.last')
+    
     # close text editor
     def quit(self):
         if self.text_change():
@@ -177,16 +188,16 @@ class a_notepad:
     
     # custom save pop-up message box
     def popupmsg(self, comm):
-        self.popup_window = tkinter.Toplevel(self.window)
+        self.popup_window = tk.Toplevel(self.window)
         self.popup_window.title("Andrea's Notepad")
         self.popup_window.geometry('400x100')
-        self.msg = tkinter.Label(self.popup_window, text="Do you wish to save changes to " + self.filename + "?")
+        self.msg = tk.Label(self.popup_window, text="Do you wish to save changes to " + self.filename + "?")
         self.msg.pack(side = 'top', fill = 'both', expand = True)
-        self.cancel_button = tkinter.Button(self.popup_window, text="Cancel", command=lambda: self.popup_window.destroy())
+        self.cancel_button = tk.Button(self.popup_window, text="Cancel", command=lambda: self.popup_window.destroy())
         self.cancel_button.pack(side='right', padx = 5, pady = 10)
-        self.nosave_button = tkinter.Button(self.popup_window, text="Don't Save", command=lambda: mult_func(self.popup_window.destroy(), comm()))
+        self.nosave_button = tk.Button(self.popup_window, text="Don't Save", command=lambda: mult_func(self.popup_window.destroy(), comm()))
         self.nosave_button.pack(side='right', padx = 5, pady = 10)
-        self.save_button = tkinter.Button(self.popup_window, text="Save", command=lambda: mult_func(self.popup_window.destroy(), self.save(), comm()))
+        self.save_button = tk.Button(self.popup_window, text="Save", command=lambda: mult_func(self.popup_window.destroy(), self.save(), comm()))
         self.save_button.pack(side = 'right', padx = 5, pady = 10)
         self.popup_window.grab_set()
     
